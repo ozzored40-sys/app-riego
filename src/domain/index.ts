@@ -1,6 +1,7 @@
 export * from './types/nutrients';
 export * from './types/crop';
 export * from './types/fertilizer';
+export * from './types/recommendation';
 
 export * from './constants/ionData';
 
@@ -22,3 +23,10 @@ export * from './nutrients/netRequirement';
 
 export * from './soil/availabilityCoefficient';
 export * from './soil/soilContribution';
+
+export * from './fertilizers/mixSolver';
+export * from './tanks/compatibility';
+export * from './tanks/tankRecipe';
+export * from './engine/pipeline';
+export * from './monitoring/deviation';
+export * from './monitoring/semaphore';
