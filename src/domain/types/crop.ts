@@ -22,6 +22,19 @@ export interface CropProfile {
   sensibilidadSalinidad: 'baja' | 'media' | 'alta';
   rangoPHOptimo: [number, number];
   rangoCEOptimo: [number, number];
+  /**
+   * Escenario de diseño de referencia (opcional) del que se derivó extraccionPorTonelada,
+   * cuando proviene de un presupuesto nutrimental documentado (no un placeholder genérico).
+   * Sirve para prellenar valores por defecto en la pantalla "Crear lote" y para dejar
+   * trazabilidad de la fuente. No es una receta universal: el programa definitivo debe
+   * ajustarse con análisis de suelo, agua, tejido, variedad, densidad, clima y metas reales.
+   */
+  datosReferencia?: {
+    fuente: string;
+    densidadPlantasHaSugerida?: number;
+    rendimientoObjetivoTonHaSugerido?: number;
+    notas?: string;
+  };
 }
 
 /** Devuelve la etapa correspondiente a una edad del cultivo en días, o la última etapa si se excede el ciclo. */

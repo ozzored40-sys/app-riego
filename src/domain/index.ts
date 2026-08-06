@@ -4,6 +4,7 @@ export * from './types/fertilizer';
 export * from './types/recommendation';
 
 export * from './constants/ionData';
+export * from './constants/oxideConversion';
 
 export * from './crops';
 export * from './fertilizers/library';
