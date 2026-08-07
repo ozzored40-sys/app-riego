@@ -9,6 +9,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'nitrato-calcio',
     nombre: 'Nitrato de calcio',
+    categoriaInsumo: 'fertilizante',
     formulaComercial: 'Ca(NO3)2',
     estadoFisico: 'solido',
     composicionPct: { N: 15.5, Ca: 19.0 },
@@ -23,6 +24,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'nitrato-magnesio',
     nombre: 'Nitrato de magnesio',
+    categoriaInsumo: 'fertilizante',
     formulaComercial: 'Mg(NO3)2',
     estadoFisico: 'solido',
     composicionPct: { N: 11.0, Mg: 9.7 },
@@ -37,6 +39,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'nitrato-potasio',
     nombre: 'Nitrato de potasio',
+    categoriaInsumo: 'fertilizante',
     formulaComercial: 'KNO3',
     estadoFisico: 'solido',
     composicionPct: { N: 13.0, K: 38.2 },
@@ -51,6 +54,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'sulfato-potasio',
     nombre: 'Sulfato de potasio',
+    categoriaInsumo: 'fertilizante',
     formulaComercial: 'K2SO4',
     estadoFisico: 'solido',
     composicionPct: { K: 41.5, S: 18.0 },
@@ -65,6 +69,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'fosfato-monopotasico',
     nombre: 'Fosfato monopotásico (MKP)',
+    categoriaInsumo: 'fertilizante',
     formulaComercial: 'KH2PO4',
     estadoFisico: 'solido',
     composicionPct: { P: 22.7, K: 28.2 },
@@ -79,6 +84,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'fosfato-monoamonico',
     nombre: 'Fosfato monoamónico (MAP)',
+    categoriaInsumo: 'fertilizante',
     formulaComercial: 'NH4H2PO4',
     estadoFisico: 'solido',
     composicionPct: { N: 12.0, P: 26.6 },
@@ -93,6 +99,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'sulfato-magnesio',
     nombre: 'Sulfato de magnesio',
+    categoriaInsumo: 'fertilizante',
     formulaComercial: 'MgSO4·7H2O',
     estadoFisico: 'solido',
     composicionPct: { Mg: 9.6, S: 13.0 },
@@ -107,6 +114,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'urea',
     nombre: 'Urea',
+    categoriaInsumo: 'fertilizante',
     formulaComercial: 'CO(NH2)2',
     estadoFisico: 'solido',
     composicionPct: { N: 46.0 },
@@ -121,6 +129,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'acido-fosforico',
     nombre: 'Ácido fosfórico',
+    categoriaInsumo: 'fertilizante',
     formulaComercial: 'H3PO4 (75%)',
     estadoFisico: 'liquido',
     composicionPct: { P: 23.6 },
@@ -135,6 +144,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'acido-nitrico',
     nombre: 'Ácido nítrico',
+    categoriaInsumo: 'fertilizante',
     formulaComercial: 'HNO3 (56%)',
     estadoFisico: 'liquido',
     composicionPct: { N: 12.3 },
@@ -149,6 +159,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'acido-sulfurico',
     nombre: 'Ácido sulfúrico',
+    categoriaInsumo: 'fertilizante',
     formulaComercial: 'H2SO4 (98%)',
     estadoFisico: 'liquido',
     composicionPct: { S: 31.0 },
@@ -163,6 +174,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'quelato-hierro',
     nombre: 'Quelato de hierro (Fe-EDDHA)',
+    categoriaInsumo: 'fertilizante',
     estadoFisico: 'solido',
     composicionPct: { Fe: 6.0 },
     solubilidadGL: 100,
@@ -176,6 +188,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'mezcla-micronutrientes',
     nombre: 'Mezcla de micronutrientes',
+    categoriaInsumo: 'fertilizante',
     estadoFisico: 'solido',
     composicionPct: { Fe: 7.0, Mn: 2.0, Zn: 1.0, Cu: 0.5, B: 0.5, Mo: 0.05 },
     solubilidadGL: 200,
@@ -189,6 +202,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'acidos-humicos-fulvicos',
     nombre: 'Ácidos húmicos y fúlvicos',
+    categoriaInsumo: 'bioestimulante',
     estadoFisico: 'liquido',
     composicionPct: {},
     densidadKgL: 1.1,
@@ -202,6 +216,7 @@ export const FERTILIZER_LIBRARY: FertilizerProduct[] = [
   {
     id: 'producto-chaman-bioestimulante',
     nombre: 'Producto Chamán (bioestimulante)',
+    categoriaInsumo: 'bioestimulante',
     estadoFisico: 'liquido',
     composicionPct: {},
     densidadKgL: 1.05,

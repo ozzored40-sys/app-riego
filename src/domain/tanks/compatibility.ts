@@ -14,9 +14,10 @@ export type TankCMode = 'acido' | 'biostimulante';
  * corregirse en este único archivo si Chamán define reglas propias.
  */
 export function tanqueAsignadoPorDefecto(producto: FertilizerProduct): TankId {
-  if (producto.categoriaTanque === 'flexible') {
-    // Productos flexibles (ej. urea, bajo índice salino) se asignan por defecto al
-    // Tambo B, que ya reúne los productos de ajuste fino de N/K/P/S.
+  if (producto.categoriaTanque === 'flexible' || producto.categoriaTanque === undefined) {
+    // Productos flexibles (ej. urea, bajo índice salino) o sin tambo asignado explícito
+    // (no debería ocurrir para productos que sí participan en el solver, ver mixSolver.ts)
+    // se asignan por defecto al Tambo B, que reúne los productos de ajuste fino de N/K/P/S.
     return 'B';
   }
   return producto.categoriaTanque;

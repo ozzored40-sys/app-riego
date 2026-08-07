@@ -1,6 +1,12 @@
 import { sqliteTable, text, real, integer } from 'drizzle-orm/sqlite-core';
 import type { NutrientAmounts } from '../../domain/types/nutrients';
-import type { Micronutrient, TankCategory, EstadoFisico } from '../../domain/types/fertilizer';
+import type {
+  Micronutrient,
+  TankCategory,
+  EstadoFisico,
+  CategoriaInsumo,
+  UnidadPrecio,
+} from '../../domain/types/fertilizer';
 
 /**
  * Schema de persistencia local (SQLite vía drizzle-orm). Este archivo es agnóstico
@@ -132,6 +138,10 @@ export const irrigationSystems = sqliteTable('irrigation_systems', {
 export const fertilizantes = sqliteTable('fertilizantes', {
   id: text('id').primaryKey(),
   nombre: text('nombre').notNull(),
+  categoriaInsumo: text('categoria_insumo')
+    .notNull()
+    .$type<CategoriaInsumo>()
+    .default('fertilizante'),
   formulaComercial: text('formula_comercial'),
   estadoFisico: text('estado_fisico').notNull().$type<EstadoFisico>(),
   composicionPct: text('composicion_pct', { mode: 'json' })
@@ -143,10 +153,13 @@ export const fertilizantes = sqliteTable('fertilizantes', {
   solubilidadGL: real('solubilidad_g_l'),
   pureza: real('pureza').notNull(),
   costoPorKg: real('costo_por_kg').notNull(),
+  unidadPrecio: text('unidad_precio').$type<UnidadPrecio>(),
+  presentacionComercial: text('presentacion_comercial'),
+  fichaTecnicaUrl: text('ficha_tecnica_url'),
   factorCE: real('factor_ce').notNull(),
   porcentajeNa: real('porcentaje_na').notNull(),
   porcentajeCl: real('porcentaje_cl').notNull(),
-  categoriaTanque: text('categoria_tanque').notNull().$type<TankCategory>(),
+  categoriaTanque: text('categoria_tanque').$type<TankCategory>(),
   esCustom: integer('es_custom', { mode: 'boolean' }).notNull().default(false),
   stockKg: real('stock_kg').notNull().default(0),
   createdAt: text('created_at').notNull(),
