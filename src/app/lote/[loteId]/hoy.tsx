@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { FormScreen } from '@/components/form/FormScreen';
 import { Section } from '@/components/form/Section';
@@ -25,6 +25,7 @@ function num(valor: string): number {
 
 export default function HoyScreen() {
   const { loteId } = useLocalSearchParams<{ loteId: string }>();
+  const router = useRouter();
   const lote = useMemo(() => (loteId ? obtenerLote(db, loteId) : undefined), [loteId]);
   const datosFaltantes = useMemo(() => (loteId ? verificarDatosLote(db, loteId) : null), [loteId]);
 
@@ -80,6 +81,24 @@ export default function HoyScreen() {
 
   return (
     <FormScreen>
+      <View style={styles.navRow}>
+        <PrimaryButton
+          label="Monitoreo"
+          variant="secondary"
+          onPress={() => router.push(`/lote/${loteId}/monitoreo`)}
+        />
+        <PrimaryButton
+          label="Savia"
+          variant="secondary"
+          onPress={() => router.push(`/lote/${loteId}/savia`)}
+        />
+        <PrimaryButton
+          label="Resultados"
+          variant="secondary"
+          onPress={() => router.push(`/lote/${loteId}/resultados`)}
+        />
+      </View>
+
       <Section title={lote.nombre} subtitle="Datos climáticos de hoy">
         <LabeledInput
           label="Evapotranspiración de referencia (ETo)"
@@ -218,6 +237,7 @@ function Fila({ label, valor }: { label: string; valor: string }) {
 }
 
 const styles = StyleSheet.create({
+  navRow: { flexDirection: 'row', gap: 8 },
   fila: { flexDirection: 'row', justifyContent: 'space-between' },
   tableHeader: {
     flexDirection: 'row',
