@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
@@ -39,7 +39,11 @@ export default function LotesScreen() {
             </ThemedText>
           </View>
         }
-        renderItem={({ item }) => <LoteCard lote={item} />}
+        renderItem={({ item }) => (
+          <Pressable onPress={() => router.push(`/lote/${item.id}/hoy`)}>
+            <LoteCard lote={item} />
+          </Pressable>
+        )}
       />
 
       <View style={styles.footer}>

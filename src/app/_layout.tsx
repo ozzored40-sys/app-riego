@@ -41,6 +41,7 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerBackTitle: 'Atrás' }}>
         <Stack.Screen name="index" options={{ title: 'Chamán NutriFlow' }} />
         <Stack.Screen name="fertilizantes" options={{ title: 'Fertilizantes' }} />
+        <Stack.Screen name="lote/[loteId]/hoy" options={{ title: 'Recomendación diaria' }} />
         <Stack.Screen name="(setup)" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
