@@ -1,0 +1,21 @@
+{
+  "name": "chaman-nutriflow-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Backend proxy hacia Claude (Anthropic) para el diálogo con el ingeniero agrónomo y el diagnóstico por foto de Chamán NutriFlow. La API key de Anthropic vive solo aquí, nunca en la app móvil.",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.115.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.0.0",
+    "@vercel/node": "^5.9.5",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.11",
+    "typescript": "^5.7.0"
+  }
+}
