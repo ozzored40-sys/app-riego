@@ -32,6 +32,12 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Chamán NutriFlow usa tu ubicación para obtener el clima del lote (ETo y lluvia) automáticamente."
+        }
       ]
     ],
     "experiments": {

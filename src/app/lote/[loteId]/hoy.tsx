@@ -9,7 +9,8 @@ import { PrimaryButton } from '@/components/form/PrimaryButton';
 import { ThemedText } from '@/components/themed-text';
 import { useTheme } from '@/hooks/use-theme';
 import { db } from '@/data/db/client';
-import { obtenerLote } from '@/data/repositories/loteRepository';
+import { obtenerLote, actualizarLote } from '@/data/repositories/loteRepository';
+import { crearClimateData } from '@/data/repositories/climateDataRepository';
 import {
   verificarDatosLote,
   loteEstaCompleto,
@@ -17,6 +18,8 @@ import {
 } from '@/state/recommendationService';
 import { kgPorHaAKgPorSector } from '@/domain/nutrients/unitConversion';
 import type { DailyRecommendation } from '@/domain/types/recommendation';
+import { obtenerUbicacionActual } from '@/services/location';
+import { obtenerClimaDeHoy } from '@/services/openMeteoClient';
 
 function num(valor: string): number {
   const n = Number(valor);
@@ -31,6 +34,9 @@ export default function HoyScreen() {
 
   const [etoMmDia, setEtoMmDia] = useState('5');
   const [lluviaEfectivaMmDia, setLluviaEfectivaMmDia] = useState('0');
+  const [fuenteClima, setFuenteClima] = useState<'manual' | 'open-meteo'>('manual');
+  const [cargandoClima, setCargandoClima] = useState(false);
+  const [errorClima, setErrorClima] = useState<string | null>(null);
   const [calculando, setCalculando] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [recomendacion, setRecomendacion] = useState<DailyRecommendation | null>(null);
@@ -63,13 +69,46 @@ export default function HoyScreen() {
     );
   }
 
+  function editarEtoManual(texto: string) {
+    setEtoMmDia(texto);
+    setFuenteClima('manual');
+  }
+
+  function editarLluviaManual(texto: string) {
+    setLluviaEfectivaMmDia(texto);
+    setFuenteClima('manual');
+  }
+
+  async function usarClimaAutomatico() {
+    setCargandoClima(true);
+    setErrorClima(null);
+    try {
+      const { lat, lon } = await obtenerUbicacionActual();
+      actualizarLote(db, loteId!, { ubicacionLat: lat, ubicacionLon: lon });
+      const clima = await obtenerClimaDeHoy(lat, lon);
+      setEtoMmDia(clima.etoMmDia.toFixed(2));
+      setLluviaEfectivaMmDia(clima.lluviaEfectivaMmDia.toFixed(2));
+      setFuenteClima('open-meteo');
+    } catch (e) {
+      // Nunca bloquea el flujo: la captura manual de ETo/lluvia sigue disponible.
+      setErrorClima(e instanceof Error ? e.message : 'No se pudo obtener el clima automático');
+    } finally {
+      setCargandoClima(false);
+    }
+  }
+
   function calcular() {
     setCalculando(true);
     setError(null);
     try {
-      const resultado = calcularYGuardarRecomendacion(db, loteId!, {
-        etoMmDia: num(etoMmDia),
-        lluviaEfectivaMmDia: num(lluviaEfectivaMmDia),
+      const clima = { etoMmDia: num(etoMmDia), lluviaEfectivaMmDia: num(lluviaEfectivaMmDia) };
+      const resultado = calcularYGuardarRecomendacion(db, loteId!, clima);
+      crearClimateData(db, {
+        loteId: loteId!,
+        fecha: new Date().toISOString().slice(0, 10),
+        etoMmDia: clima.etoMmDia,
+        lluviaMm: clima.lluviaEfectivaMmDia,
+        fuente: fuenteClima,
       });
       setRecomendacion(resultado);
     } catch (e) {
@@ -100,17 +139,34 @@ export default function HoyScreen() {
       </View>
 
       <Section title={lote.nombre} subtitle="Datos climáticos de hoy">
+        <PrimaryButton
+          label="📍 Usar clima automático (GPS)"
+          variant="secondary"
+          onPress={usarClimaAutomatico}
+          loading={cargandoClima}
+        />
+        {errorClima ? (
+          <ThemedText type="small" style={{ color: '#c0392b' }}>
+            {errorClima}. Puedes seguir capturando el clima manualmente.
+          </ThemedText>
+        ) : null}
+        {fuenteClima === 'open-meteo' ? (
+          <ThemedText type="small" themeColor="textSecondary">
+            Clima obtenido de Open-Meteo para la ubicación del lote. Puedes editarlo si lo
+            necesitas.
+          </ThemedText>
+        ) : null}
         <LabeledInput
           label="Evapotranspiración de referencia (ETo)"
           value={etoMmDia}
-          onChangeText={setEtoMmDia}
+          onChangeText={editarEtoManual}
           keyboardType="decimal-pad"
           suffix="mm/día"
         />
         <LabeledInput
           label="Lluvia efectiva"
           value={lluviaEfectivaMmDia}
-          onChangeText={setLluviaEfectivaMmDia}
+          onChangeText={editarLluviaManual}
           keyboardType="decimal-pad"
           suffix="mm/día"
         />
