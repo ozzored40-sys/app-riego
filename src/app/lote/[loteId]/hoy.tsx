@@ -127,6 +127,11 @@ export default function HoyScreen() {
           onPress={() => router.push(`/lote/${loteId}/diagnostico`)}
         />
         <PrimaryButton
+          label="Agrónomo"
+          variant="secondary"
+          onPress={() => router.push(`/lote/${loteId}/agronomo`)}
+        />
+        <PrimaryButton
           label="Monitoreo"
           variant="secondary"
           onPress={() => router.push(`/lote/${loteId}/monitoreo`)}

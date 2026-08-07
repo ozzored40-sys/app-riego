@@ -226,3 +226,11 @@ export const alerts = sqliteTable('alerts', {
   resuelto: integer('resuelto', { mode: 'boolean' }).notNull().default(false),
   createdAt: text('created_at').notNull(),
 });
+
+export const chatMessages = sqliteTable('chat_messages', {
+  id: text('id').primaryKey(),
+  loteId: text('lote_id').notNull(),
+  rol: text('rol').notNull(), // 'user' | 'assistant'
+  contenido: text('contenido').notNull(),
+  createdAt: text('created_at').notNull(),
+});

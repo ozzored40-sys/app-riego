@@ -43,6 +43,7 @@ export default function RootLayout() {
         <Stack.Screen name="fertilizantes" options={{ title: 'Fertilizantes' }} />
         <Stack.Screen name="lote/[loteId]/hoy" options={{ title: 'Recomendación diaria' }} />
         <Stack.Screen name="lote/[loteId]/diagnostico" options={{ title: 'Diagnóstico inicial' }} />
+        <Stack.Screen name="lote/[loteId]/agronomo" options={{ title: 'Agrónomo virtual' }} />
         <Stack.Screen name="lote/[loteId]/monitoreo" options={{ title: 'Monitoreo' }} />
         <Stack.Screen name="lote/[loteId]/savia" options={{ title: 'Savia' }} />
         <Stack.Screen name="lote/[loteId]/resultados" options={{ title: 'Resultados' }} />
