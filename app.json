@@ -38,6 +38,13 @@
         {
           "locationWhenInUsePermission": "Chamán NutriFlow usa tu ubicación para obtener el clima del lote (ETo y lluvia) automáticamente."
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Chamán NutriFlow necesita acceso a tus fotos para que subas una imagen del cultivo al diagnóstico.",
+          "cameraPermission": "Chamán NutriFlow necesita la cámara para tomar una foto del cultivo y enviarla al diagnóstico."
+        }
       ]
     ],
     "experiments": {
