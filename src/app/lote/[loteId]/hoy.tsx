@@ -122,6 +122,11 @@ export default function HoyScreen() {
     <FormScreen>
       <View style={styles.navRow}>
         <PrimaryButton
+          label="Diagnóstico"
+          variant="secondary"
+          onPress={() => router.push(`/lote/${loteId}/diagnostico`)}
+        />
+        <PrimaryButton
           label="Monitoreo"
           variant="secondary"
           onPress={() => router.push(`/lote/${loteId}/monitoreo`)}
@@ -293,7 +298,7 @@ function Fila({ label, valor }: { label: string; valor: string }) {
 }
 
 const styles = StyleSheet.create({
-  navRow: { flexDirection: 'row', gap: 8 },
+  navRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   fila: { flexDirection: 'row', justifyContent: 'space-between' },
   tableHeader: {
     flexDirection: 'row',

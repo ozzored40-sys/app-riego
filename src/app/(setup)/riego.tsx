@@ -51,7 +51,7 @@ export default function RiegoScreen() {
         : undefined,
     });
     setGuardando(false);
-    router.replace('/');
+    router.replace(`/lote/${loteId}/diagnostico`);
   }
 
   return (

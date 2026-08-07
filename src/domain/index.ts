@@ -31,3 +31,5 @@ export * from './tanks/tankRecipe';
 export * from './engine/pipeline';
 export * from './monitoring/deviation';
 export * from './monitoring/semaphore';
+
+export * from './diagnostics/initialDiagnosis';
