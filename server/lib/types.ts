@@ -30,3 +30,28 @@ export interface SolicitudDiagnosticoFoto {
   descripcion?: string;
   contexto: ContextoLote;
 }
+
+/** Insumo del catálogo Chamán tal como lo manda la app, para que el agente de ventas
+ *  solo hable de productos y precios reales (nunca inventados). */
+export interface ProductoCatalogoVentas {
+  nombre: string;
+  categoriaInsumo: string;
+  presentacionComercial?: string;
+  costoPorKg: number;
+  unidadPrecio?: string;
+}
+
+/** Contexto del lote que la app manda en cada solicitud al agente de ventas virtual. */
+export interface ContextoVentas {
+  cultivo?: string;
+  etapaFenologica?: string;
+  sistemaProduccion?: string;
+  /** Resumen en texto plano del diagnóstico inicial por reglas de ese lote, si existe. */
+  ultimoDiagnosticoReglas?: string;
+  catalogo: ProductoCatalogoVentas[];
+}
+
+export interface SolicitudChatVentas {
+  mensajes: MensajeChat[];
+  contexto: ContextoVentas;
+}

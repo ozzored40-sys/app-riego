@@ -1,14 +1,11 @@
 import type { AppDatabase } from '../data/db/types';
-import { obtenerLote } from '../data/repositories/loteRepository';
 import {
   crearChatMessage,
   listarChatMessagesDeLote,
   borrarHistorialChat,
   type ChatMessage,
 } from '../data/repositories/chatMessageRepository';
-import { getCropProfile } from '../domain/crops';
-import { etapaPorEdad } from '../domain/types/crop';
-import { calcularDiagnosticoDeLote } from './diagnosisService';
+import { obtenerInfoBaseLote } from './loteContextHelpers';
 import {
   enviarMensajeChat,
   enviarFotoParaDiagnostico,
@@ -17,37 +14,15 @@ import {
 } from '../services/agronomistClient';
 import type { FotoCapturada } from '../services/photoCapture';
 
-function diasDesde(fechaISO: string): number {
-  const inicio = new Date(fechaISO).getTime();
-  return Math.max(0, Math.round((Date.now() - inicio) / (1000 * 60 * 60 * 24)));
-}
-
 /** Arma el contexto del lote (cultivo, etapa, diagnóstico por reglas) para dárselo al agrónomo virtual. */
 export function construirContextoLote(db: AppDatabase, loteId: string): ContextoLote {
-  const lote = obtenerLote(db, loteId);
-  if (!lote) throw new Error('Lote no encontrado');
-
-  const cultivo = getCropProfile(lote.cropId);
-  const edadDiasCultivo = diasDesde(lote.fechaSiembra);
-  const etapa = lote.etapaIdManual
-    ? cultivo.etapas.find((e) => e.id === lote.etapaIdManual)
-    : etapaPorEdad(cultivo, edadDiasCultivo);
-
-  const diagnostico = calcularDiagnosticoDeLote(db, loteId);
-  const hallazgosRelevantes = diagnostico?.hallazgos.filter((h) => h.nivel !== 'ok') ?? [];
-  const ultimoDiagnosticoReglas =
-    diagnostico && hallazgosRelevantes.length > 0
-      ? `Nivel general ${diagnostico.resumen}. ${hallazgosRelevantes.map((h) => h.mensaje).join(' ')}`
-      : diagnostico
-        ? `Nivel general ${diagnostico.resumen}, sin hallazgos fuera de rango.`
-        : undefined;
-
+  const info = obtenerInfoBaseLote(db, loteId);
   return {
-    cultivo: cultivo.nombre,
-    etapaFenologica: etapa?.nombre,
-    sistemaProduccion: lote.sistemaProduccion,
-    edadDiasCultivo,
-    ultimoDiagnosticoReglas,
+    cultivo: info.cultivoNombre,
+    etapaFenologica: info.etapaFenologica,
+    sistemaProduccion: info.sistemaProduccion,
+    edadDiasCultivo: info.edadDiasCultivo,
+    ultimoDiagnosticoReglas: info.ultimoDiagnosticoReglas,
   };
 }
 

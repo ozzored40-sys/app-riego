@@ -1,4 +1,12 @@
-import type { ContextoLote, MensajeChat, SolicitudChat, SolicitudDiagnosticoFoto } from './types';
+import type {
+  ContextoLote,
+  ContextoVentas,
+  MensajeChat,
+  ProductoCatalogoVentas,
+  SolicitudChat,
+  SolicitudChatVentas,
+  SolicitudDiagnosticoFoto,
+} from './types';
 
 export type ResultadoValidacion<T> = { ok: true; datos: T } | { ok: false; error: string };
 
@@ -6,10 +14,13 @@ export const MAX_MENSAJES_CONVERSACION = 30;
 export const MAX_LARGO_MENSAJE = 4000;
 /** ~6MB en base64 (≈4.5MB de imagen real); la app debe comprimir antes de enviar. */
 export const MAX_BASE64_BYTES = 6_000_000;
+export const MAX_PRODUCTOS_CATALOGO = 200;
 
 function esContextoLoteValido(valor: unknown): valor is ContextoLote {
   return (
-    typeof valor === 'object' && valor !== null && typeof (valor as ContextoLote).cultivo === 'string'
+    typeof valor === 'object' &&
+    valor !== null &&
+    typeof (valor as ContextoLote).cultivo === 'string'
   );
 }
 
@@ -46,13 +57,59 @@ export function validarSolicitudChat(body: unknown): ResultadoValidacion<Solicit
   return { ok: true, datos: { mensajes, contexto } };
 }
 
+function esProductoCatalogoVentasValido(valor: unknown): valor is ProductoCatalogoVentas {
+  if (typeof valor !== 'object' || valor === null) return false;
+  const producto = valor as ProductoCatalogoVentas;
+  return (
+    typeof producto.nombre === 'string' &&
+    producto.nombre.length > 0 &&
+    typeof producto.categoriaInsumo === 'string' &&
+    typeof producto.costoPorKg === 'number'
+  );
+}
+
+function esContextoVentasValido(valor: unknown): valor is ContextoVentas {
+  if (typeof valor !== 'object' || valor === null) return false;
+  const contexto = valor as ContextoVentas;
+  return (
+    Array.isArray(contexto.catalogo) &&
+    contexto.catalogo.length <= MAX_PRODUCTOS_CATALOGO &&
+    contexto.catalogo.every(esProductoCatalogoVentasValido)
+  );
+}
+
+export function validarSolicitudChatVentas(
+  body: unknown,
+): ResultadoValidacion<SolicitudChatVentas> {
+  if (typeof body !== 'object' || body === null) {
+    return { ok: false, error: 'Cuerpo de solicitud inválido' };
+  }
+  const { mensajes, contexto } = body as Partial<SolicitudChatVentas>;
+
+  if (!Array.isArray(mensajes) || mensajes.length === 0) {
+    return { ok: false, error: 'Se requiere al menos un mensaje' };
+  }
+  if (mensajes.length > MAX_MENSAJES_CONVERSACION) {
+    return { ok: false, error: `Máximo ${MAX_MENSAJES_CONVERSACION} mensajes por conversación` };
+  }
+  if (!mensajes.every(esMensajeChatValido)) {
+    return { ok: false, error: 'Formato de mensaje inválido' };
+  }
+  if (!esContextoVentasValido(contexto)) {
+    return { ok: false, error: 'Falta o es inválido el catálogo de insumos en el contexto' };
+  }
+
+  return { ok: true, datos: { mensajes, contexto } };
+}
+
 export function validarSolicitudDiagnosticoFoto(
   body: unknown,
 ): ResultadoValidacion<SolicitudDiagnosticoFoto> {
   if (typeof body !== 'object' || body === null) {
     return { ok: false, error: 'Cuerpo de solicitud inválido' };
   }
-  const { imagenBase64, mediaType, descripcion, contexto } = body as Partial<SolicitudDiagnosticoFoto>;
+  const { imagenBase64, mediaType, descripcion, contexto } =
+    body as Partial<SolicitudDiagnosticoFoto>;
 
   if (typeof imagenBase64 !== 'string' || imagenBase64.length === 0) {
     return { ok: false, error: 'Falta la imagen' };
