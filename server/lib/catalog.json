@@ -1,0 +1,71 @@
+{
+  "_instrucciones": "Catálogo real de Chamán Agro Soluciones para el agente de WhatsApp. Edita este archivo con los productos, presentaciones y precios REALES antes de activar el bot en producción — mientras un producto tenga precioConfirmado en false, el bot avisará al cliente que va a confirmar el precio con el equipo en vez de inventarlo (ver lib/catalog.ts y lib/whatsappTools.ts).",
+  "productos": [
+    {
+      "id": "corrector-calcio-foliar",
+      "nombre": "Corrector de calcio foliar",
+      "categoria": "corrector",
+      "presentacion": "Bidón 1 L",
+      "precioMXN": 0,
+      "precioConfirmado": false,
+      "descripcionBreve": "Aporte foliar de calcio de rápida absorción para deficiencias visibles y prevención de blossom-end rot / bitter pit.",
+      "cultivosRecomendados": ["papaya", "jitomate", "chile", "pepino"],
+      "disponible": true
+    },
+    {
+      "id": "corrector-magnesio-foliar",
+      "nombre": "Corrector de magnesio foliar",
+      "categoria": "corrector",
+      "presentacion": "Bidón 1 L",
+      "precioMXN": 0,
+      "precioConfirmado": false,
+      "descripcionBreve": "Corrige clorosis intervenal por deficiencia de magnesio.",
+      "cultivosRecomendados": ["papaya", "limón", "jitomate", "chile"],
+      "disponible": true
+    },
+    {
+      "id": "nitrato-calcio-fertirriego",
+      "nombre": "Nitrato de calcio para fertirriego",
+      "categoria": "fertilizante",
+      "presentacion": "Saco 25 kg",
+      "precioMXN": 0,
+      "precioConfirmado": false,
+      "descripcionBreve": "Fuente de nitrógeno nítrico y calcio para tanque A del sistema de fertirriego.",
+      "cultivosRecomendados": ["papaya", "jitomate", "chile", "pepino"],
+      "disponible": true
+    },
+    {
+      "id": "nitrato-potasio-fertirriego",
+      "nombre": "Nitrato de potasio para fertirriego",
+      "categoria": "fertilizante",
+      "presentacion": "Saco 25 kg",
+      "precioMXN": 0,
+      "precioConfirmado": false,
+      "descripcionBreve": "Fuente de potasio y nitrógeno para llenado de fruto, tanque A del sistema de fertirriego.",
+      "cultivosRecomendados": ["papaya", "jitomate", "chile", "pepino"],
+      "disponible": true
+    },
+    {
+      "id": "fungicida-contacto-cobre",
+      "nombre": "Fungicida de contacto a base de cobre",
+      "categoria": "fungicida",
+      "presentacion": "Bolsa 1 kg",
+      "precioMXN": 0,
+      "precioConfirmado": false,
+      "descripcionBreve": "Protección de contacto contra hongos foliares comunes; uso preventivo o al primer síntoma.",
+      "cultivosRecomendados": ["papaya", "limón", "jitomate", "chile", "pepino"],
+      "disponible": true
+    },
+    {
+      "id": "bioestimulante-enraizador",
+      "nombre": "Bioestimulante enraizador",
+      "categoria": "bioestimulante",
+      "presentacion": "Bidón 1 L",
+      "precioMXN": 0,
+      "precioConfirmado": false,
+      "descripcionBreve": "Estimula desarrollo radicular en trasplante y recuperación de estrés hídrico.",
+      "cultivosRecomendados": ["papaya", "limón", "jitomate", "chile", "pepino"],
+      "disponible": true
+    }
+  ]
+}
