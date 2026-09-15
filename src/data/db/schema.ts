@@ -234,3 +234,12 @@ export const chatMessages = sqliteTable('chat_messages', {
   contenido: text('contenido').notNull(),
   createdAt: text('created_at').notNull(),
 });
+
+/** Historial de conversación con el agente de ventas virtual, separado del agrónomo (chatMessages). */
+export const salesChatMessages = sqliteTable('sales_chat_messages', {
+  id: text('id').primaryKey(),
+  loteId: text('lote_id').notNull(),
+  rol: text('rol').notNull(), // 'user' | 'assistant'
+  contenido: text('contenido').notNull(),
+  createdAt: text('created_at').notNull(),
+});
