@@ -65,4 +65,24 @@ describe('extraerMensajesDeTexto', () => {
     expect(extraerMensajesDeTexto('texto')).toEqual([]);
     expect(extraerMensajesDeTexto({ entry: 'no es un arreglo' })).toEqual([]);
   });
+
+  it('agrega el nombre del perfil cuando viene en contacts', () => {
+    const payload = {
+      entry: [
+        {
+          changes: [
+            {
+              value: {
+                contacts: [{ wa_id: '5213320967184', profile: { name: 'Juan' } }],
+                messages: [{ from: '5213320967184', type: 'text', text: { body: 'Hola' } }],
+              },
+            },
+          ],
+        },
+      ],
+    };
+    expect(extraerMensajesDeTexto(payload)).toEqual([
+      { numeroDe: '5213320967184', texto: 'Hola', nombrePerfil: 'Juan' },
+    ]);
+  });
 });

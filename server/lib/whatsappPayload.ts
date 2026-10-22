@@ -9,6 +9,8 @@
 export interface MensajeTextoEntrante {
   numeroDe: string;
   texto: string;
+  /** Nombre del perfil de WhatsApp del remitente (value.contacts[].profile.name), si viene. */
+  nombrePerfil?: string;
 }
 
 /** `unknown` intencional: es el body crudo de un webhook externo, nunca confiar en su forma. */
@@ -20,13 +22,22 @@ export function extraerMensajesDeTexto(payload: unknown): MensajeTextoEntrante[]
     const cambios = objetoArray(entrada, 'changes');
     for (const cambio of cambios) {
       const valor = campo(cambio, 'value');
+      const nombresPorNumero = new Map<string, string>();
+      for (const contacto of objetoArray(valor, 'contacts')) {
+        const waId = campo(contacto, 'wa_id');
+        const nombre = campo(campo(contacto, 'profile'), 'name');
+        if (typeof waId === 'string' && typeof nombre === 'string') {
+          nombresPorNumero.set(waId, nombre);
+        }
+      }
       const mensajesEntrantes = objetoArray(valor, 'messages');
       for (const mensaje of mensajesEntrantes) {
         const numeroDe = campo(mensaje, 'from');
         const tipo = campo(mensaje, 'type');
         const texto = campo(campo(mensaje, 'text'), 'body');
         if (tipo === 'text' && typeof numeroDe === 'string' && typeof texto === 'string') {
-          mensajes.push({ numeroDe, texto });
+          const nombrePerfil = nombresPorNumero.get(numeroDe);
+          mensajes.push(nombrePerfil ? { numeroDe, texto, nombrePerfil } : { numeroDe, texto });
         }
       }
     }

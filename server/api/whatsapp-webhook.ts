@@ -6,12 +6,7 @@ import {
   firmaWebhookValida,
 } from '../lib/whatsapp';
 import { extraerMensajesDeTexto } from '../lib/whatsappPayload';
-import { obtenerHistorialWhatsapp, agregarTurnoWhatsapp } from '../lib/salesConversationStore';
-import { CATALOGO_VENTAS_WHATSAPP } from '../lib/salesCatalog';
-import { obtenerClienteAnthropic, MODELO_AGRONOMO, MAX_TOKENS_RESPUESTA } from '../lib/anthropic';
-import { SYSTEM_PROMPT_VENTAS, construirContextoVentas } from '../lib/prompts';
-import { MAX_LARGO_MENSAJE } from '../lib/validation';
-import type { MensajeChat } from '../lib/types';
+import { responderTurnoVentas } from '../lib/salesTurn';
 
 // Desactiva el bodyParser automático de Vercel: necesitamos el body crudo (sin
 // parsear) para poder verificar la firma HMAC que manda Meta en cada webhook.
@@ -23,7 +18,9 @@ export const config = { api: { bodyParser: false } };
  * POST es cada mensaje entrante. A diferencia de /api/chat y /api/sales-chat (donde
  * la app manda el historial completo desde SQLite), aquí el servidor sí guarda
  * estado: el historial por número de WhatsApp vive en Vercel KV (ver
- * salesConversationStore.ts), porque no hay ninguna app detrás del prospecto.
+ * salesConversationStore.ts), porque no hay ninguna app detrás del prospecto. Cada
+ * turno además califica al prospecto (N1–N4) y lo sincroniza a Google Sheets /
+ * alertas (ver salesTurn.ts y leadSync.ts).
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { verifyToken, appSecret } = obtenerConfigWhatsapp();
@@ -70,8 +67,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // 200 a tiempo, reintenta el webhook completo, duplicando mensajes ya procesados.
   try {
     const mensajesEntrantes = extraerMensajesDeTexto(payload);
-    for (const { numeroDe, texto } of mensajesEntrantes) {
-      await procesarMensajeEntrante(numeroDe, texto);
+    for (const { numeroDe, texto, nombrePerfil } of mensajesEntrantes) {
+      await procesarMensajeEntrante(numeroDe, texto, nombrePerfil);
     }
   } catch (error) {
     console.error('Error procesando webhook de WhatsApp:', error);
@@ -88,31 +85,17 @@ async function leerCuerpoCrudo(req: VercelRequest): Promise<Buffer> {
   return Buffer.concat(partes);
 }
 
-async function procesarMensajeEntrante(numeroDe: string, textoRecibido: string): Promise<void> {
-  const texto = textoRecibido.slice(0, MAX_LARGO_MENSAJE);
-  const mensajeUsuario: MensajeChat = { rol: 'user', contenido: texto };
-
-  const historialPrevio = await obtenerHistorialWhatsapp(numeroDe);
-  const mensajes: MensajeChat[] = [...historialPrevio, mensajeUsuario];
-
-  const contexto = construirContextoVentas({ catalogo: CATALOGO_VENTAS_WHATSAPP });
-
-  const anthropic = obtenerClienteAnthropic();
-  const respuesta = await anthropic.messages.create({
-    model: MODELO_AGRONOMO,
-    max_tokens: MAX_TOKENS_RESPUESTA,
-    system: `${SYSTEM_PROMPT_VENTAS}\n\nContexto:\n${contexto}`,
-    messages: mensajes.map((m) => ({ role: m.rol, content: m.contenido })),
+async function procesarMensajeEntrante(
+  numeroDe: string,
+  texto: string,
+  nombrePerfil?: string,
+): Promise<void> {
+  const { textoVisible } = await responderTurnoVentas({
+    idConversacion: numeroDe,
+    telefono: numeroDe,
+    canal: 'whatsapp',
+    texto,
+    nombrePerfil,
   });
-
-  const textoRespuesta = respuesta.content
-    .map((bloque) => (bloque.type === 'text' ? bloque.text : ''))
-    .join('\n')
-    .trim();
-
-  await agregarTurnoWhatsapp(numeroDe, [
-    mensajeUsuario,
-    { rol: 'assistant', contenido: textoRespuesta },
-  ]);
-  await enviarMensajeWhatsapp(numeroDe, textoRespuesta);
+  await enviarMensajeWhatsapp(numeroDe, textoVisible);
 }
