@@ -2,6 +2,8 @@ import {
   obtenerHistorialWhatsapp,
   agregarTurnoWhatsapp,
   borrarHistorialWhatsapp,
+  guardarNivelLead,
+  obtenerNivelLead,
 } from '../lib/salesConversationStore';
 
 const redisGetMock = jest.fn();
@@ -74,8 +76,21 @@ describe('salesConversationStore', () => {
     expect(actualizado[actualizado.length - 1]).toEqual({ rol: 'user', contenido: 'uno nuevo' });
   });
 
-  it('borrarHistorialWhatsapp borra la clave del número', async () => {
+  it('borrarHistorialWhatsapp borra el historial y el nivel del lead del número', async () => {
     await borrarHistorialWhatsapp('5213320967184');
-    expect(redisDelMock).toHaveBeenCalledWith('ventas:whatsapp:5213320967184');
+    expect(redisDelMock).toHaveBeenCalledWith(
+      'ventas:whatsapp:5213320967184',
+      'ventas:whatsapp:nivel:5213320967184',
+    );
+  });
+
+  it('guardarNivelLead guarda el nivel con TTL y obtenerNivelLead lo lee', async () => {
+    await guardarNivelLead('5213320967184', 'N3');
+    expect(redisSetMock).toHaveBeenCalledWith('ventas:whatsapp:nivel:5213320967184', 'N3', {
+      ex: 60 * 60 * 24 * 7,
+    });
+
+    redisGetMock.mockResolvedValue('N3');
+    expect(await obtenerNivelLead('5213320967184')).toBe('N3');
   });
 });

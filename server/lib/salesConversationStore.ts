@@ -60,5 +60,21 @@ export async function agregarTurnoWhatsapp(
 }
 
 export async function borrarHistorialWhatsapp(numeroWhatsapp: string): Promise<void> {
-  await obtenerClienteRedis().del(claveConversacion(numeroWhatsapp));
+  await obtenerClienteRedis().del(
+    claveConversacion(numeroWhatsapp),
+    claveNivelLead(numeroWhatsapp),
+  );
+}
+
+function claveNivelLead(numeroWhatsapp: string): string {
+  return `ventas:whatsapp:nivel:${numeroWhatsapp}`;
+}
+
+/** Último nivel N1–N4 registrado para esa conversación (para alertar solo al subir a N3/N4). */
+export async function obtenerNivelLead(numeroWhatsapp: string): Promise<string | null> {
+  return obtenerClienteRedis().get<string>(claveNivelLead(numeroWhatsapp));
+}
+
+export async function guardarNivelLead(numeroWhatsapp: string, nivel: string): Promise<void> {
+  await obtenerClienteRedis().set(claveNivelLead(numeroWhatsapp), nivel, { ex: TTL_SEGUNDOS });
 }
