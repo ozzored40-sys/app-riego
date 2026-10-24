@@ -8,6 +8,7 @@ import { SegmentedSelect } from '@/components/form/SegmentedSelect';
 import { Section } from '@/components/form/Section';
 import { BotonAccion, Etiqueta, Pantalla, Tarjeta, TituloSeccion } from '@/components/chaman/ui';
 import { TextoEnriquecido } from '@/components/chaman/TextoEnriquecido';
+import { BotonReportarIa } from '@/components/chaman/BotonReportarIa';
 import { useTheme } from '@/hooks/use-theme';
 import { generarCopyAnuncio } from '@/state/specialistService';
 import { especialistasConfigurados } from '@/services/specialistClient';
@@ -71,6 +72,7 @@ export default function MarketingScreen() {
           {generado ? (
             <View style={[styles.generado, { backgroundColor: theme.backgroundSelected }]}>
               <TextoEnriquecido texto={generado} />
+              <BotonReportarIa origen="copywriter" contenido={generado} />
               <View style={styles.acciones}>
                 <BotonAccion
                   icono="compartir"

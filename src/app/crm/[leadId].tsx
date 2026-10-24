@@ -16,6 +16,7 @@ import {
   TituloSeccion,
 } from '@/components/chaman/ui';
 import { TextoEnriquecido } from '@/components/chaman/TextoEnriquecido';
+import { BotonReportarIa } from '@/components/chaman/BotonReportarIa';
 import { useTheme } from '@/hooks/use-theme';
 import { IMAGENES_PRODUCTO } from '@/constants/chamanImages';
 import { db } from '@/data/db/client';
@@ -27,6 +28,7 @@ import {
   type Lead,
 } from '@/data/repositories/leadRepository';
 import { generarProtocoloIa } from '@/state/specialistService';
+import { LEYENDA_IA, LEYENDA_ORIENTATIVA } from '@/legal/documentos';
 import { especialistasConfigurados } from '@/services/specialistClient';
 import {
   enlaceWhatsApp,
@@ -88,7 +90,7 @@ export default function DictamenScreen() {
 
   function textoParaCompartir(): string {
     return lead!.protocoloIa
-      ? `${lead!.dictamenTexto}\n\n— Protocolo ampliado (Dra. Athena, IA) —\n${lead!.protocoloIa}`
+      ? `${lead!.dictamenTexto}\n\n— Protocolo ampliado generado por IA (verifíquelo antes de aplicar) —\n${lead!.protocoloIa}`
       : lead!.dictamenTexto;
   }
 
@@ -190,14 +192,22 @@ export default function DictamenScreen() {
         />
       </FilaIndicadores>
       <ThemedText type="small" themeColor="textSecondary">
-        {producto.frecuencia}. {producto.intervaloSeguridad}. Montos de referencia, sujetos a
-        cotización.
+        {producto.frecuencia}. {producto.intervaloSeguridad}.
       </ThemedText>
+      <Tarjeta acento={theme.warning}>
+        <ThemedText type="small">⚠️ {LEYENDA_ORIENTATIVA}</ThemedText>
+      </Tarjeta>
 
       <TituloSeccion>Protocolo ampliado con IA</TituloSeccion>
       <Tarjeta>
         {lead.protocoloIa ? (
-          <TextoEnriquecido texto={lead.protocoloIa} />
+          <>
+            <TextoEnriquecido texto={lead.protocoloIa} />
+            <BotonReportarIa origen="protocolo-ia" contenido={lead.protocoloIa} />
+            <ThemedText type="small" themeColor="textSecondary">
+              ⚠️ {LEYENDA_IA}
+            </ThemedText>
+          </>
         ) : (
           <ThemedText type="small" themeColor="textSecondary">
             La Dra. Athena (especialista IA) puede redactar el protocolo técnico completo a partir

@@ -1,4 +1,4 @@
-import { Linking, StyleSheet, View } from 'react-native';
+import { Alert, Linking, Platform, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import Constants from 'expo-constants';
 
@@ -6,10 +6,41 @@ import { ThemedText } from '@/components/themed-text';
 import { Encabezado, FilaMenu, Pantalla, Tarjeta, TituloSeccion } from '@/components/chaman/ui';
 import { useTheme } from '@/hooks/use-theme';
 import { CONTACTO_CHAMAN, enlaceWhatsApp } from '@/domain/chaman';
+import { db } from '@/data/db/client';
+import { borrarTodosLosDatos } from '@/data/repositories/legalRepository';
+import { useLoteStore } from '@/state/loteStore';
+import { DOCUMENTOS_LEGALES, type IdDocumentoLegal } from '@/legal/documentos';
+
+const ICONO_DOCUMENTO = {
+  terminos: 'terminos',
+  privacidad: 'privacidad',
+  'uso-responsable': 'seguridad',
+} as const satisfies Record<IdDocumentoLegal, string>;
 
 export default function MasScreen() {
   const router = useRouter();
   const theme = useTheme();
+  const cargarLotes = useLoteStore((estado) => estado.cargarLotes);
+
+  function confirmarBorrado() {
+    const borrar = () => {
+      borrarTodosLosDatos(db);
+      cargarLotes();
+      const aviso = 'Se borraron todos tus datos de este dispositivo.';
+      if (Platform.OS === 'web') globalThis.alert?.(aviso);
+      else Alert.alert('Listo', aviso);
+    };
+    const mensaje =
+      'Se eliminarán de este teléfono tus lotes, análisis, dictámenes, prospectos del CRM y conversaciones. No se puede deshacer.';
+    if (Platform.OS === 'web') {
+      if (globalThis.confirm?.(mensaje)) borrar();
+      return;
+    }
+    Alert.alert('Borrar todos mis datos', mensaje, [
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'Borrar todo', style: 'destructive', onPress: borrar },
+    ]);
+  }
 
   return (
     <Pantalla>
@@ -61,6 +92,26 @@ export default function MasScreen() {
           descripcion="Generadores, Venturi, ORP y mantenimiento."
           onPress={() => router.push('/especialista/capi1')}
           color={theme.accentSecondary}
+        />
+      </View>
+
+      <TituloSeccion>Legal y privacidad</TituloSeccion>
+      <View style={styles.lista}>
+        {(Object.keys(DOCUMENTOS_LEGALES) as IdDocumentoLegal[]).map((id) => (
+          <FilaMenu
+            key={id}
+            icono={ICONO_DOCUMENTO[id]}
+            titulo={DOCUMENTOS_LEGALES[id].titulo}
+            onPress={() => router.push(`/legal/${id}`)}
+            color={theme.textSecondary}
+          />
+        ))}
+        <FilaMenu
+          icono="borrarTodo"
+          titulo="Borrar todos mis datos"
+          descripcion="Elimina de este teléfono lotes, dictámenes, CRM y conversaciones."
+          onPress={confirmarBorrado}
+          color={theme.danger}
         />
       </View>
 

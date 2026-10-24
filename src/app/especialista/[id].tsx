@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
 import { Icono } from '@/components/chaman/Icono';
 import { TextoEnriquecido } from '@/components/chaman/TextoEnriquecido';
+import { BotonReportarIa } from '@/components/chaman/BotonReportarIa';
 import { BotonAccion } from '@/components/chaman/ui';
 import { useTheme } from '@/hooks/use-theme';
 import { db } from '@/data/db/client';
@@ -25,6 +26,7 @@ import {
 } from '@/state/specialistService';
 import { especialistasConfigurados } from '@/services/specialistClient';
 import { obtenerEspecialista, type IdEspecialista } from '@/domain/chaman';
+import { LEYENDA_IA } from '@/legal/documentos';
 
 export default function ChatEspecialistaScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -131,6 +133,9 @@ export default function ChatEspecialistaScreen() {
               >
                 <ThemedText type="small">{especialista.saludo}</ThemedText>
               </View>
+              <ThemedText type="small" themeColor="textSecondary" style={styles.leyenda}>
+                ⚠️ {LEYENDA_IA}
+              </ThemedText>
               {mensajes.length === 0 && configurado ? (
                 <View style={styles.sugerencias}>
                   {especialista.preguntasSugeridas.map((pregunta) => (
@@ -166,6 +171,10 @@ export default function ChatEspecialistaScreen() {
                 ]}
               >
                 <TextoEnriquecido texto={item.contenido} />
+                <BotonReportarIa
+                  origen={`especialista:${idEspecialista}`}
+                  contenido={item.contenido}
+                />
               </View>
             )
           }
@@ -257,6 +266,7 @@ const styles = StyleSheet.create({
   burbujaUsuario: { alignSelf: 'flex-end', borderBottomRightRadius: 4 },
   burbujaAsistente: { alignSelf: 'flex-start', borderWidth: 1, borderBottomLeftRadius: 4 },
   escribiendo: { paddingVertical: 6 },
+  leyenda: { textAlign: 'center', fontSize: 12, lineHeight: 17 },
   entrada: { borderTopWidth: 1, padding: 10, gap: 8 },
   accionesFila: { flexDirection: 'row' },
   filaEntrada: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },

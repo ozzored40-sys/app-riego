@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
 import { DarkTheme, Stack, ThemeProvider, type Theme } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
@@ -8,6 +8,12 @@ import { db } from '@/data/db/client';
 import { migrations } from '@/data/db/migrations';
 import { sembrarFertilizantes } from '@/data/seed/loadCropsAndFertilizers';
 import { ThemedText } from '@/components/themed-text';
+import { AceptacionLegal } from '@/components/chaman/AceptacionLegal';
+import {
+  registrarAceptacionLegal,
+  versionLegalAceptada,
+} from '@/data/repositories/legalRepository';
+import { VERSION_LEGAL } from '@/legal/documentos';
 import { useTheme } from '@/hooks/use-theme';
 import { Colors } from '@/constants/theme';
 
@@ -30,9 +36,14 @@ const TEMA_NAVEGACION: Theme = {
 export default function RootLayout() {
   const { success, error } = useMigrations(db, migrations);
   const theme = useTheme();
+  const [legalAceptado, setLegalAceptado] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (success) sembrarFertilizantes(db);
+    if (success) {
+      sembrarFertilizantes(db);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- lectura única desde SQLite tras migrar
+      setLegalAceptado(versionLegalAceptada(db, VERSION_LEGAL));
+    }
   }, [success]);
 
   if (error) {
@@ -44,12 +55,26 @@ export default function RootLayout() {
     );
   }
 
-  if (!success) {
+  if (!success || legalAceptado === null) {
     return (
       <View style={[styles.center, { backgroundColor: theme.background }]}>
         <ActivityIndicator />
         <ThemedText themeColor="textSecondary">Preparando Chamán 4.0…</ThemedText>
       </View>
+    );
+  }
+
+  if (!legalAceptado) {
+    return (
+      <>
+        <StatusBar style="light" />
+        <AceptacionLegal
+          onAceptar={() => {
+            registrarAceptacionLegal(db, VERSION_LEGAL, Platform.OS);
+            setLegalAceptado(true);
+          }}
+        />
+      </>
     );
   }
 
@@ -65,6 +90,7 @@ export default function RootLayout() {
         <Stack.Screen name="marketing" options={{ title: 'Meta Ads y copys' }} />
         <Stack.Screen name="pagos" options={{ title: 'Pagos y facturación' }} />
         <Stack.Screen name="fertilizantes" options={{ title: 'Fertilizantes' }} />
+        <Stack.Screen name="legal/[doc]" options={{ title: 'Legal y privacidad' }} />
         <Stack.Screen name="lote/[loteId]/hoy" options={{ title: 'Recomendación diaria' }} />
         <Stack.Screen name="lote/[loteId]/diagnostico" options={{ title: 'Diagnóstico inicial' }} />
         <Stack.Screen name="lote/[loteId]/agronomo" options={{ title: 'Agrónomo virtual' }} />

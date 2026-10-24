@@ -11,6 +11,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
+import { BotonReportarIa } from '@/components/chaman/BotonReportarIa';
 import { LabeledInput } from '@/components/form/LabeledInput';
 import { PrimaryButton } from '@/components/form/PrimaryButton';
 import { useTheme } from '@/hooks/use-theme';
@@ -28,6 +29,7 @@ import { sugerirInsumosPorTexto } from '@/state/insumoSuggestion';
 import { asistenteConfigurado } from '@/services/agronomistClient';
 import { tomarFotoConCamara, elegirFotoDeGaleria } from '@/services/photoCapture';
 import type { CategoriaInsumo, FertilizerProduct } from '@/domain/types/fertilizer';
+import { LEYENDA_IA } from '@/legal/documentos';
 
 const ETIQUETA_CATEGORIA_INSUMO: Record<CategoriaInsumo, string> = {
   fertilizante: 'Fertilizante',
@@ -160,6 +162,9 @@ export default function AgronomoScreen() {
                   precisar el diagnóstico y te propondrá actividades y protocolos. También puedes
                   adjuntar una foto de la planta.
                 </ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  ⚠️ {LEYENDA_IA}
+                </ThemedText>
               </View>
             ) : null
           }
@@ -238,6 +243,7 @@ function Burbuja({ mensaje, catalogo }: { mensaje: ChatMessage; catalogo: Fertil
         <ThemedText type="small" style={{ color: esUsuario ? theme.background : theme.text }}>
           {mensaje.contenido}
         </ThemedText>
+        {!esUsuario ? <BotonReportarIa origen="agronomo" contenido={mensaje.contenido} /> : null}
         {sugerencias.length > 0 ? (
           <View style={[styles.sugerenciasBox, { borderTopColor: theme.backgroundSelected }]}>
             <ThemedText type="small" themeColor="textSecondary">

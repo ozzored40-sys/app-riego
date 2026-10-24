@@ -1,5 +1,6 @@
 import { CONTACTO_CHAMAN, formatoMxn } from './contacto';
 import { ETIQUETA_METODO } from './productos';
+import { LEYENDA_ORIENTATIVA } from '../../legal/documentos';
 import type { Prescripcion, Severidad } from './prescripcion';
 
 export interface EncabezadoDictamen {
@@ -49,11 +50,13 @@ export function textoDictamen(encabezado: EncabezadoDictamen, prescripcion: Pres
     prescripcion.ahorroEstimadoMxn > 0
       ? `📉 Ahorro estimado vs. programa convencional: ${formatoMxn(prescripcion.ahorroEstimadoMxn)}`
       : null,
-    '(Montos de referencia, sujetos a cotización formal.)',
+
     ...(prescripcion.notasTecnicas.length > 0
       ? ['', '📝 Notas técnicas:', ...prescripcion.notasTecnicas.map((n) => `• ${n}`)]
       : []),
     encabezado.observaciones ? `\nObservaciones de campo: ${encabezado.observaciones}` : null,
+    '',
+    `⚠️ ${LEYENDA_ORIENTATIVA}`,
     '',
     `${CONTACTO_CHAMAN.empresa} · ${CONTACTO_CHAMAN.sitioWeb} · WhatsApp ${CONTACTO_CHAMAN.whatsappLegible}`,
   ];

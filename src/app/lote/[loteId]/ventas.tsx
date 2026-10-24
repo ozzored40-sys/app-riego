@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
+import { BotonReportarIa } from '@/components/chaman/BotonReportarIa';
 import { LabeledInput } from '@/components/form/LabeledInput';
 import { PrimaryButton } from '@/components/form/PrimaryButton';
 import { useTheme } from '@/hooks/use-theme';
@@ -198,6 +199,7 @@ function Burbuja({
         <ThemedText type="small" style={{ color: esUsuario ? theme.background : theme.text }}>
           {mensaje.contenido}
         </ThemedText>
+        {!esUsuario ? <BotonReportarIa origen="ventas" contenido={mensaje.contenido} /> : null}
         {sugerencias.length > 0 ? (
           <View style={[styles.sugerenciasBox, { borderTopColor: theme.backgroundSelected }]}>
             <ThemedText type="small" themeColor="textSecondary">

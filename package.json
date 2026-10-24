@@ -59,7 +59,8 @@
     "lint": "eslint .",
     "test": "jest",
     "format": "prettier --write .",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "legal:generar": "node --experimental-strip-types --no-warnings scripts/generar-legales.mjs"
   },
   "private": true
 }

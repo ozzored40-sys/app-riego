@@ -11,6 +11,7 @@ describe('especialistas', () => {
     expect(prompt).toContain('Chamán Ozono Biofungicida');
     expect(prompt).toContain('Nunca prometas resultados garantizados');
     expect(prompt).toContain('+52 33 2096 7184');
+    expect(prompt).toContain('Solo atiendes temas agrícolas');
   });
 
   it('reconoce solo ids conocidos', () => {

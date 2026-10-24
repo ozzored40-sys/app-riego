@@ -287,3 +287,15 @@ export const specialistMessages = sqliteTable('specialist_messages', {
   contenido: text('contenido').notNull(),
   createdAt: text('created_at').notNull(),
 });
+
+/**
+ * Registro de aceptación de los documentos legales (Términos, Aviso de Privacidad y Uso
+ * Responsable). Se guarda cada versión aceptada con su fecha como evidencia; si cambia
+ * VERSION_LEGAL (src/legal/documentos.ts) la app vuelve a pedir la aceptación.
+ */
+export const aceptacionesLegales = sqliteTable('aceptaciones_legales', {
+  id: text('id').primaryKey(),
+  version: text('version').notNull(),
+  aceptadoEn: text('aceptado_en').notNull(),
+  plataforma: text('plataforma').notNull(),
+});

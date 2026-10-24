@@ -29,6 +29,10 @@ const ICONOS = {
   web: { ios: 'globe', android: 'language' },
   tendencia: { ios: 'chart.line.uptrend.xyaxis', android: 'trending_up' },
   ciencia: { ios: 'flask.fill', android: 'science' },
+  terminos: { ios: 'doc.text.fill', android: 'gavel' },
+  privacidad: { ios: 'lock.shield.fill', android: 'privacy_tip' },
+  seguridad: { ios: 'exclamationmark.shield.fill', android: 'health_and_safety' },
+  borrarTodo: { ios: 'trash.fill', android: 'delete_forever' },
 } as const satisfies Record<string, { ios: SFSymbol; android: AndroidSymbol }>;
 
 export type NombreIcono = keyof typeof ICONOS;
