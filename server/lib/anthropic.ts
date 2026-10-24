@@ -14,3 +14,5 @@ export function obtenerClienteAnthropic(): Anthropic {
 /** Modelo con visión, buen balance costo/calidad para diálogo y diagnóstico por foto. */
 export const MODELO_AGRONOMO = 'claude-sonnet-5';
 export const MAX_TOKENS_RESPUESTA = 1024;
+/** Los protocolos ampliados de los especialistas son más largos que un turno de chat. */
+export const MAX_TOKENS_ESPECIALISTA = 2048;

@@ -243,3 +243,47 @@ export const salesChatMessages = sqliteTable('sales_chat_messages', {
   contenido: text('contenido').notNull(),
   createdAt: text('created_at').notNull(),
 });
+
+/**
+ * CRM del Centro de Comando Chamán 4.0: cada diagnóstico de campo genera un dictamen
+ * con folio y queda como prospecto (lead) en el embudo comercial N1→N4. Se guardan los
+ * valores calculados de la prescripción tal como se entregaron al productor, para que
+ * el dictamen no cambie si después se ajustan las fichas del catálogo.
+ */
+export const leads = sqliteTable('leads', {
+  id: text('id').primaryKey(),
+  folio: text('folio').notNull(),
+  productor: text('productor').notNull(),
+  telefono: text('telefono'),
+  ubicacion: text('ubicacion'),
+  cultivoClave: text('cultivo_clave').notNull(),
+  cultivoNombre: text('cultivo_nombre').notNull(),
+  superficieHa: real('superficie_ha').notNull(),
+  productoClave: text('producto_clave').notNull(),
+  productoNombre: text('producto_nombre').notNull(),
+  problema: text('problema').notNull(),
+  severidad: text('severidad').notNull(), // 'Leve' | 'Moderado' | 'Crítico'
+  metodo: text('metodo').notNull(), // 'drench' | 'foliar' | 'inyeccion'
+  ppmOzono: real('ppm_ozono').notNull(),
+  dosisLHa: real('dosis_l_ha').notNull(),
+  aplicaciones: integer('aplicaciones').notNull(),
+  productoTotalLitros: real('producto_total_litros').notNull(),
+  aguaPortadoraLHa: real('agua_portadora_l_ha').notNull(),
+  costoEstimadoMxn: real('costo_estimado_mxn').notNull(),
+  ahorroEstimadoMxn: real('ahorro_estimado_mxn').notNull(),
+  etapa: text('etapa').notNull(), // EtapaPipeline: 'N1' | 'N2' | 'N3' | 'N4' | 'perdido'
+  notas: text('notas'),
+  dictamenTexto: text('dictamen_texto').notNull(),
+  protocoloIa: text('protocolo_ia'),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});
+
+/** Conversaciones con los especialistas IA (Athena, Chiron, Artemis, Mayahuel, Hermes, Capi 1). */
+export const specialistMessages = sqliteTable('specialist_messages', {
+  id: text('id').primaryKey(),
+  especialistaId: text('especialista_id').notNull(),
+  rol: text('rol').notNull(), // 'user' | 'assistant'
+  contenido: text('contenido').notNull(),
+  createdAt: text('created_at').notNull(),
+});

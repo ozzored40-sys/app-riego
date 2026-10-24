@@ -1,3 +1,5 @@
+import type { IdEspecialista } from './especialistas';
+
 /** Contexto del lote que la app manda en cada solicitud, para que el agrónomo virtual no empiece de cero. */
 export interface ContextoLote {
   cultivo: string;
@@ -54,4 +56,12 @@ export interface ContextoVentas {
 export interface SolicitudChatVentas {
   mensajes: MensajeChat[];
   contexto: ContextoVentas;
+}
+
+/** Solicitud a /api/specialist-chat: un especialista IA del Centro de Comando Chamán 4.0. */
+export interface SolicitudChatEspecialista {
+  especialistaId: IdEspecialista;
+  mensajes: MensajeChat[];
+  /** Contexto opcional en texto plano (p. ej. el dictamen de campo de un lead). */
+  contexto?: string;
 }

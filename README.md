@@ -1,56 +1,44 @@
-# Welcome to your Expo app 👋
+# Chamán 4.0 — Centro de Comando
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+App móvil (iOS y Android, con Expo) de **Chamán Agro Soluciones** que une en un solo lugar:
 
-## Get started
+| Pestaña | Qué hace |
+| --- | --- |
+| **Inicio** | Panel con prospectos, pipeline, ventas cerradas, lotes y accesos rápidos. |
+| **Campo** | Riego y nutrición por lote (NutriFlow): análisis de suelo/agua, recomendación diaria, monitoreo, agrónomo virtual con foto y agente de ventas. |
+| **Dictamen** | Diagnóstico en campo: cultivo, problema y severidad → prescripción Chamán (dosis, ppm de O₃, volúmenes, costo y ahorro estimados) con **folio consecutivo** y registro automático en el CRM. |
+| **IA** | Especialistas IA: Dra. Athena (fitopatología), Dr. Chiron (suelo y goteros), Dra. Artemis (frutos y estrés), Ing. Mayahuel (agave), Dr. Hermes (rentabilidad) y Capi 1 (soporte técnico de equipos). |
+| **CRM** | Embudo N1 Prospecto → N2 Prueba → N3 Cotización → N4 Cliente, con notas, envío del dictamen por WhatsApp y protocolo ampliado generado por IA. |
+| **Más** | Catálogo con fotos y fichas de la línea Chamán Ozono, calculadora de generador O₃ y ROI, plantillas y redactor de anuncios para Meta Ads, pagos con Mercado Pago y CFDI. |
 
-1. Install dependencies
+Unifica la app de riego original con el prototipo "Chamán Agro Command Center" de Google AI Studio.
 
-   ```bash
-   npm install
-   ```
+## Arquitectura
 
-2. Start the app
+- `src/app/` — pantallas (Expo Router; pestañas en `src/app/(tabs)/`).
+- `src/domain/` — lógica pura y probada: fertirriego (`crops`, `water`, `nutrients`, …) y Chamán 4.0 (`domain/chaman`: productos, cultivos, prescripción, calculadora, especialistas, anuncios, embudo).
+- `src/data/` — SQLite local (drizzle). Los datos viven en el teléfono y funcionan sin internet.
+- `server/` — backend en Vercel que llama a Claude (Anthropic). La API key nunca va dentro de la app. Ver [server/README.md](server/README.md).
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Desarrollo
 
 ```bash
-npm run reset-project
+npm install
+cp .env.example .env.local   # URL y clave del backend de IA
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Pruebas y verificaciones:
 
-### Other setup steps
+```bash
+npm test            # dominio, datos y servicios
+npx tsc --noEmit
+npm run lint
+cd server && npm test && npx tsc --noEmit
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Si cambias `src/data/db/schema.ts`, genera la migración con `npm run db:generate`.
 
-## Learn more
+## Publicar en App Store y Google Play
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Ver la guía paso a paso en [PUBLICAR.md](PUBLICAR.md).

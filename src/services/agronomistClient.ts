@@ -35,7 +35,8 @@ export function asistenteConfigurado(): boolean {
   return Boolean(baseUrl && appKey);
 }
 
-async function llamarBackend(
+/** Reutilizado por los demás clientes del mismo backend (ventas, especialistas). */
+export async function llamarBackend(
   ruta: string,
   cuerpo: unknown,
   fetchImpl: typeof fetch = fetch,

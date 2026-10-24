@@ -10,7 +10,7 @@ import { useLoteStore } from '@/state/loteStore';
 import { getCropProfile } from '@/domain/crops';
 import type { Lote } from '@/data/repositories/loteRepository';
 
-export default function LotesScreen() {
+export default function CampoScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { lotes, cargarLotes } = useLoteStore();
@@ -20,12 +20,14 @@ export default function LotesScreen() {
   }, [cargarLotes]);
 
   return (
-    <SafeAreaView style={[styles.flex, { backgroundColor: theme.background }]}>
+    <SafeAreaView style={[styles.flex, { backgroundColor: theme.background }]} edges={['top']}>
       <View style={styles.header}>
         <ThemedText type="title" style={styles.title}>
-          Chamán NutriFlow
+          Campo
         </ThemedText>
-        <ThemedText themeColor="textSecondary">Sistema de cálculo hídrico y nutricional</ThemedText>
+        <ThemedText themeColor="textSecondary">
+          Riego y nutrición de tus lotes (NutriFlow)
+        </ThemedText>
       </View>
 
       <FlatList
@@ -68,7 +70,9 @@ function LoteCard({ lote }: { lote: Lote }) {
   }
 
   return (
-    <View style={[styles.card, { backgroundColor: theme.backgroundElement }]}>
+    <View
+      style={[styles.card, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}
+    >
       <ThemedText type="smallBold">{lote.nombre}</ThemedText>
       <ThemedText type="small" themeColor="textSecondary">
         {nombreCultivo} · {lote.sistemaProduccion} · {lote.areaHa} ha
@@ -80,9 +84,9 @@ function LoteCard({ lote }: { lote: Lote }) {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   header: { paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8, gap: 4 },
-  title: { fontSize: 28, lineHeight: 34 },
+  title: { fontSize: 28, lineHeight: 34, fontWeight: 800 },
   list: { paddingHorizontal: 20, paddingVertical: 12, gap: 12, flexGrow: 1 },
   empty: { paddingVertical: 40, alignItems: 'center' },
-  card: { borderRadius: 14, padding: 16, gap: 4 },
+  card: { borderRadius: 14, padding: 16, gap: 4, borderWidth: 1 },
   footer: { padding: 20, gap: 10 },
 });

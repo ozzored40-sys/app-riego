@@ -7,21 +7,30 @@ import '@/global.css';
 
 import { Platform } from 'react-native';
 
+/**
+ * Paleta de marca Chamán 4.0 ("Centro de Comando"): fondo azul noche con acentos
+ * esmeralda y cian. La app es solo oscura (userInterfaceStyle: "dark" en app.json), así
+ * que ambas entradas usan la misma paleta; se conservan las dos claves para no romper a
+ * los componentes que indexan por esquema de color.
+ */
+const PaletaChaman = {
+  text: '#f8fafc',
+  background: '#070b14',
+  backgroundElement: '#0f172a',
+  backgroundSelected: '#1e293b',
+  textSecondary: '#94a3b8',
+  border: '#1e293b',
+  accent: '#10b981',
+  accentSoft: 'rgba(16, 185, 129, 0.15)',
+  accentSecondary: '#06b6d4',
+  onAccent: '#ffffff',
+  warning: '#f59e0b',
+  danger: '#f87171',
+} as const;
+
 export const Colors = {
-  light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
-  },
-  dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
-  },
+  light: PaletaChaman,
+  dark: PaletaChaman,
 } as const;
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;

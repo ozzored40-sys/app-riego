@@ -9,6 +9,7 @@ export function LabeledInput({
   placeholder,
   keyboardType = 'default',
   suffix,
+  multiline,
 }: {
   label: string;
   value: string;
@@ -16,6 +17,7 @@ export function LabeledInput({
   placeholder?: string;
   keyboardType?: KeyboardTypeOptions;
   suffix?: string;
+  multiline?: boolean;
 }) {
   const theme = useTheme();
   return (
@@ -30,7 +32,12 @@ export function LabeledInput({
           placeholder={placeholder}
           placeholderTextColor={theme.textSecondary}
           keyboardType={keyboardType}
-          style={[styles.input, { color: theme.text, backgroundColor: theme.backgroundSelected }]}
+          multiline={multiline}
+          style={[
+            styles.input,
+            multiline && styles.multiline,
+            { color: theme.text, backgroundColor: theme.backgroundSelected },
+          ]}
         />
         {suffix ? (
           <ThemedText type="small" themeColor="textSecondary" style={styles.suffix}>
@@ -45,6 +52,14 @@ export function LabeledInput({
 const styles = StyleSheet.create({
   wrapper: { gap: 6 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  input: { flex: 1, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, fontSize: 16 },
+  input: {
+    flex: 1,
+    minWidth: 0,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 16,
+  },
+  multiline: { minHeight: 88, textAlignVertical: 'top' },
   suffix: { minWidth: 48 },
 });

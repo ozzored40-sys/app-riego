@@ -29,6 +29,13 @@
       "when": 1787151645228,
       "tag": "0003_aromatic_skaar",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1792860986599,
+      "tag": "0004_woozy_vulcan",
+      "breakpoints": true
     }
   ]
 }

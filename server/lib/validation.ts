@@ -4,9 +4,11 @@ import type {
   MensajeChat,
   ProductoCatalogoVentas,
   SolicitudChat,
+  SolicitudChatEspecialista,
   SolicitudChatVentas,
   SolicitudDiagnosticoFoto,
 } from './types';
+import { esIdEspecialista } from './especialistas';
 
 export type ResultadoValidacion<T> = { ok: true; datos: T } | { ok: false; error: string };
 
@@ -131,4 +133,40 @@ export function validarSolicitudDiagnosticoFoto(
   }
 
   return { ok: true, datos: { imagenBase64, mediaType, descripcion, contexto } };
+}
+
+/** Máximo de contexto en texto plano (un dictamen completo cabe de sobra). */
+export const MAX_LARGO_CONTEXTO = 8000;
+
+export function validarSolicitudChatEspecialista(
+  body: unknown,
+): ResultadoValidacion<SolicitudChatEspecialista> {
+  if (typeof body !== 'object' || body === null) {
+    return { ok: false, error: 'Cuerpo de solicitud inválido' };
+  }
+  const { especialistaId, mensajes, contexto } = body as Partial<SolicitudChatEspecialista>;
+
+  if (!esIdEspecialista(especialistaId)) {
+    return { ok: false, error: 'Especialista desconocido' };
+  }
+  if (!Array.isArray(mensajes) || mensajes.length === 0) {
+    return { ok: false, error: 'Se requiere al menos un mensaje' };
+  }
+  if (mensajes.length > MAX_MENSAJES_CONVERSACION) {
+    return { ok: false, error: `Máximo ${MAX_MENSAJES_CONVERSACION} mensajes por conversación` };
+  }
+  if (!mensajes.every(esMensajeChatValido)) {
+    return { ok: false, error: 'Formato de mensaje inválido' };
+  }
+  if (mensajes[0].rol !== 'user') {
+    return { ok: false, error: 'La conversación debe empezar con un mensaje del usuario' };
+  }
+  if (
+    contexto !== undefined &&
+    (typeof contexto !== 'string' || contexto.length > MAX_LARGO_CONTEXTO)
+  ) {
+    return { ok: false, error: 'Contexto inválido' };
+  }
+
+  return { ok: true, datos: { especialistaId, mensajes, contexto } };
 }

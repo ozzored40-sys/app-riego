@@ -34,11 +34,11 @@ export function SegmentedSelect<T extends string>({
               style={[
                 styles.pill,
                 {
-                  backgroundColor: selected ? theme.text : theme.backgroundSelected,
+                  backgroundColor: selected ? theme.accent : theme.backgroundSelected,
                 },
               ]}
             >
-              <ThemedText type="small" style={{ color: selected ? theme.background : theme.text }}>
+              <ThemedText type="small" style={{ color: selected ? theme.onAccent : theme.text }}>
                 {option.label}
               </ThemedText>
             </Pressable>

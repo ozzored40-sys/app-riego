@@ -15,9 +15,10 @@ regresa la respuesta.
 - `POST /api/chat` — turno de conversación con el agrónomo virtual.
 - `POST /api/sales-chat` — turno de conversación con el agente de ventas virtual (lo usa la app; el catálogo de insumos lo manda la app desde su inventario local).
 - `POST /api/diagnose-photo` — diagnóstico inicial a partir de una foto del cultivo.
+- `POST /api/specialist-chat` — especialistas IA del Centro de Comando Chamán 4.0 (`athena-phytopath`, `chiron-rhizosphere`, `artemis-baccata`, `mayahuel-cyberweber`, `hermes-fintech`, `capi1`) y el redactor de anuncios (`copywriter`). Cuerpo: `{ especialistaId, mensajes, contexto? }`. Los prompts viven en `lib/especialistas.ts`.
 - `GET`/`POST /api/whatsapp-webhook` — canal de WhatsApp del agente de ventas (Meta Cloud API). Ver [Canal de WhatsApp](#canal-de-whatsapp-del-agente-de-ventas) abajo.
 
-Los tres primeros requieren el header `X-Chaman-App-Key` con el valor de
+Los cuatro primeros requieren el header `X-Chaman-App-Key` con el valor de
 `APP_SHARED_SECRET` (ver `lib/auth.ts` — es una protección básica anti-abuso, no
 autenticación de usuario real). El webhook de WhatsApp usa un mecanismo de
 seguridad distinto (verificación de firma de Meta), ver más abajo.

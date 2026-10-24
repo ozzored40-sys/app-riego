@@ -14,7 +14,9 @@ export function Section({
 }) {
   const theme = useTheme();
   return (
-    <View style={[styles.card, { backgroundColor: theme.backgroundElement }]}>
+    <View
+      style={[styles.card, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}
+    >
       <ThemedText type="subtitle" style={styles.title}>
         {title}
       </ThemedText>
@@ -29,7 +31,7 @@ export function Section({
 }
 
 const styles = StyleSheet.create({
-  card: { borderRadius: 16, padding: 16, gap: 4 },
+  card: { borderRadius: 16, padding: 16, gap: 4, borderWidth: 1 },
   title: { fontSize: 20, lineHeight: 26 },
   body: { marginTop: 12, gap: 14 },
 });

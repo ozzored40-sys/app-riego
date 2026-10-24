@@ -24,15 +24,15 @@ export function PrimaryButton({
       style={[
         styles.button,
         {
-          backgroundColor: isPrimary ? theme.text : theme.backgroundElement,
+          backgroundColor: isPrimary ? theme.accent : theme.backgroundSelected,
           opacity: disabled ? 0.5 : 1,
         },
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={isPrimary ? theme.background : theme.text} />
+        <ActivityIndicator color={isPrimary ? theme.onAccent : theme.text} />
       ) : (
-        <ThemedText type="smallBold" style={{ color: isPrimary ? theme.background : theme.text }}>
+        <ThemedText type="smallBold" style={{ color: isPrimary ? theme.onAccent : theme.text }}>
           {label}
         </ThemedText>
       )}
