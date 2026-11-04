@@ -62,3 +62,19 @@ export async function agregarTurnoWhatsapp(
 export async function borrarHistorialWhatsapp(numeroWhatsapp: string): Promise<void> {
   await obtenerClienteRedis().del(claveConversacion(numeroWhatsapp));
 }
+
+/** 24 h: OpenWA reintenta entregas fallidas mucho antes de eso. */
+const TTL_DEDUPE_SEGUNDOS = 60 * 60 * 24;
+
+/**
+ * Marca un evento de webhook como procesado y regresa `true` solo la primera vez que se
+ * ve esa clave (SET NX en Redis). OpenWA entrega "al menos una vez", así que sin esto un
+ * reintento haría que el agente contestara dos veces el mismo mensaje.
+ */
+export async function marcarEventoProcesado(claveIdempotencia: string): Promise<boolean> {
+  const resultado = await obtenerClienteRedis().set(`ventas:webhook:${claveIdempotencia}`, 1, {
+    nx: true,
+    ex: TTL_DEDUPE_SEGUNDOS,
+  });
+  return resultado === 'OK';
+}

@@ -16,6 +16,7 @@ regresa la respuesta.
 - `POST /api/sales-chat` — turno de conversación con el agente de ventas virtual (lo usa la app; el catálogo de insumos lo manda la app desde su inventario local).
 - `POST /api/diagnose-photo` — diagnóstico inicial a partir de una foto del cultivo.
 - `GET`/`POST /api/whatsapp-webhook` — canal de WhatsApp del agente de ventas (Meta Cloud API). Ver [Canal de WhatsApp](#canal-de-whatsapp-del-agente-de-ventas) abajo.
+- `POST /api/openwa-webhook` — el mismo agente de ventas, pero a través de un gateway [OpenWA](https://github.com/rmyndharis/OpenWA) autohospedado. Ver [Canal alternativo: OpenWA](#canal-alternativo-openwa) abajo.
 
 Los tres primeros requieren el header `X-Chaman-App-Key` con el valor de
 `APP_SHARED_SECRET` (ver `lib/auth.ts` — es una protección básica anti-abuso, no
@@ -120,6 +121,69 @@ recibe respuesta automática del agente de ventas.
   una lista de precios oficial vigente, hay que mantenerla a mano.
 - El historial por número se olvida solo tras 7 días de inactividad (TTL en
   `lib/salesConversationStore.ts`).
+
+## Canal alternativo: OpenWA
+
+`api/openwa-webhook.ts` conecta el mismo agente de ventas (mismo prompt, catálogo e
+historial en Redis) a un número de WhatsApp a través de
+[OpenWA](https://github.com/rmyndharis/OpenWA), un gateway de código abierto (MIT)
+que tú hospedas. Puedes usarlo en lugar del canal de Meta o junto con él (cada uno con
+su propio número).
+
+**Antes de elegirlo, ten en cuenta:**
+
+- OpenWA **no es una API oficial**: vincula un número normal de WhatsApp como si fuera
+  WhatsApp Web (escaneando un QR). Es gratis y no requiere aprobación de Meta, pero
+  automatizar una cuenta así va contra los términos de WhatsApp y **el número puede
+  ser bloqueado**, sobre todo si escribe a mucha gente que no lo tiene agendado. Usa
+  un número dedicado, no el personal.
+- OpenWA **no corre en Vercel**: es un servicio que debe estar encendido todo el
+  tiempo (Docker en un VPS, Railway, Fly.io, una computadora en casa con túnel, etc.).
+  Este backend sí sigue en Vercel; OpenWA solo le avisa por webhook.
+- Si el gateway se cae o el teléfono pierde la sesión, el agente deja de contestar
+  hasta que vuelvas a vincular el QR.
+
+### 1. Levantar OpenWA
+
+Sigue el *Quick Start* del README de OpenWA (en resumen: clonar el repo y
+`docker compose up -d` en un servidor con Docker). Desde su dashboard:
+
+1. Crea una **sesión** y escanea el QR con el teléfono del número de ventas. Copia el
+   ID de la sesión → `OPENWA_SESSION_ID`.
+2. Crea una **API key** con rol **operator** (idealmente limitada a esa sesión) →
+   `OPENWA_API_KEY`.
+3. La URL pública del gateway (con HTTPS), sin `/api` → `OPENWA_BASE_URL`.
+
+### 2. Variables de entorno en Vercel
+
+Agrega `OPENWA_BASE_URL`, `OPENWA_API_KEY`, `OPENWA_SESSION_ID` y
+`OPENWA_WEBHOOK_SECRET` (inventas tú un valor largo, ej. `openssl rand -hex 32`;
+OpenWA pide mínimo 16 caracteres). Necesita la misma base de datos Redis del canal de
+Meta (paso 2 de arriba). Vuelve a desplegar.
+
+### 3. Registrar el webhook en OpenWA
+
+En el dashboard de OpenWA (o con `POST /api/webhooks`), crea un webhook para la
+sesión de ventas:
+
+- **URL:** `https://tu-backend.vercel.app/api/openwa-webhook`
+- **Eventos:** solo `message.received`.
+- **Secret:** el mismo valor de `OPENWA_WEBHOOK_SECRET`.
+
+Con el botón de prueba del webhook debes ver un `200`. A partir de ahí, los mensajes
+de texto que lleguen a ese número reciben respuesta del agente de ventas.
+
+### Notas de este canal
+
+- La firma `X-OpenWA-Signature` es **obligatoria**: sin `OPENWA_WEBHOOK_SECRET` el
+  endpoint responde `503`, y con firma inválida, `401`.
+- Solo contesta texto de chats individuales; ignora grupos, estados, canales,
+  multimedia y los mensajes que manda el propio número. Si llega un evento de otra
+  sesión distinta a `OPENWA_SESSION_ID`, también se ignora.
+- OpenWA entrega cada evento "al menos una vez"; el servidor guarda en Redis la
+  `idempotencyKey` de cada mensaje (24 h) para no contestar dos veces el mismo.
+- El historial se guarda aparte del de Meta (clave `openwa:<chatId>`), con el mismo
+  TTL de 7 días.
 
 ## Costos y límites a tener en cuenta
 

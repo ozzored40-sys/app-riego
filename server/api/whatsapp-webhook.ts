@@ -6,12 +6,7 @@ import {
   firmaWebhookValida,
 } from '../lib/whatsapp';
 import { extraerMensajesDeTexto } from '../lib/whatsappPayload';
-import { obtenerHistorialWhatsapp, agregarTurnoWhatsapp } from '../lib/salesConversationStore';
-import { CATALOGO_VENTAS_WHATSAPP } from '../lib/salesCatalog';
-import { obtenerClienteAnthropic, MODELO_AGRONOMO, MAX_TOKENS_RESPUESTA } from '../lib/anthropic';
-import { SYSTEM_PROMPT_VENTAS, construirContextoVentas } from '../lib/prompts';
-import { MAX_LARGO_MENSAJE } from '../lib/validation';
-import type { MensajeChat } from '../lib/types';
+import { responderComoAgenteVentas } from '../lib/salesWhatsappAgent';
 
 // Desactiva el bodyParser automático de Vercel: necesitamos el body crudo (sin
 // parsear) para poder verificar la firma HMAC que manda Meta en cada webhook.
@@ -89,30 +84,6 @@ async function leerCuerpoCrudo(req: VercelRequest): Promise<Buffer> {
 }
 
 async function procesarMensajeEntrante(numeroDe: string, textoRecibido: string): Promise<void> {
-  const texto = textoRecibido.slice(0, MAX_LARGO_MENSAJE);
-  const mensajeUsuario: MensajeChat = { rol: 'user', contenido: texto };
-
-  const historialPrevio = await obtenerHistorialWhatsapp(numeroDe);
-  const mensajes: MensajeChat[] = [...historialPrevio, mensajeUsuario];
-
-  const contexto = construirContextoVentas({ catalogo: CATALOGO_VENTAS_WHATSAPP });
-
-  const anthropic = obtenerClienteAnthropic();
-  const respuesta = await anthropic.messages.create({
-    model: MODELO_AGRONOMO,
-    max_tokens: MAX_TOKENS_RESPUESTA,
-    system: `${SYSTEM_PROMPT_VENTAS}\n\nContexto:\n${contexto}`,
-    messages: mensajes.map((m) => ({ role: m.rol, content: m.contenido })),
-  });
-
-  const textoRespuesta = respuesta.content
-    .map((bloque) => (bloque.type === 'text' ? bloque.text : ''))
-    .join('\n')
-    .trim();
-
-  await agregarTurnoWhatsapp(numeroDe, [
-    mensajeUsuario,
-    { rol: 'assistant', contenido: textoRespuesta },
-  ]);
+  const textoRespuesta = await responderComoAgenteVentas(numeroDe, textoRecibido);
   await enviarMensajeWhatsapp(numeroDe, textoRespuesta);
 }
